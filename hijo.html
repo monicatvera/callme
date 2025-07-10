@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Página Hijo - Formulario de Saludo</title>
+    <style>
+      :root {
+        --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --success-color: #4caf50;
+        --success-hover: #45a049;
+        --text-light: #fff;
+        --bg-overlay: rgba(255, 255, 255, 0.1);
+        --bg-overlay-border: rgba(255, 255, 255, 0.18);
+        --border-radius: 15px;
+        --transition-speed: 0.3s;
+        --shadow-blur: 10px;
+        --backdrop-blur: 10px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        background: var(--primary-gradient);
+        color: var(--text-light);
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 0;
+        line-height: 1.6;
+        overflow: hidden;
+      }
+
+      .main-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        padding: 15px;
+        overflow: hidden;
+      }
+
+      .form-container {
+        background-color: var(--bg-overlay);
+        padding: 25px;
+        border-radius: var(--border-radius);
+        backdrop-filter: blur(var(--backdrop-blur));
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37),
+          0 2px 16px 0 rgba(31, 38, 135, 0.2);
+        border: 1px solid var(--bg-overlay-border);
+        text-align: center;
+        max-width: 380px;
+        width: 100%;
+        animation: slideIn 0.5s ease-out;
+        max-height: calc(100vh - 30px);
+        overflow-y: auto;
+      }
+
+      .welcome-emoji {
+        font-size: 2.5em;
+        margin-bottom: 15px;
+        animation: bounce 2s infinite;
+      }
+
+      .form-header {
+        margin-bottom: 20px;
+      }
+
+      .form-title {
+        margin: 0 0 10px 0;
+        font-size: 1.6em;
+        font-weight: 300;
+        letter-spacing: 1px;
+      }
+
+      .form-description {
+        margin: 0;
+        opacity: 0.9;
+        font-size: 1em;
+      }
+
+      .greeting-form {
+        width: 100%;
+      }
+
+      .form-fieldset {
+        border: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      .visually-hidden {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+        text-align: left;
+      }
+
+      .form-label {
+        display: block;
+        margin-bottom: 6px;
+        font-weight: 600;
+        font-size: 0.95em;
+        color: var(--text-light);
+      }
+
+      .form-input {
+        width: 100%;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        background-color: rgba(255, 255, 255, 0.95);
+        color: #333;
+        transition: all var(--transition-speed) ease;
+        outline: none;
+      }
+
+      .form-input:focus {
+        box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3),
+          0 4px 12px rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
+      }
+
+      .form-input::placeholder {
+        color: #666;
+        opacity: 0.8;
+      }
+
+      .submit-btn {
+        background-color: var(--success-color);
+        color: var(--text-light);
+        border: none;
+        padding: 12px 25px;
+        font-size: 15px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all var(--transition-speed) ease;
+        width: 100%;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .submit-btn:hover:not(:disabled) {
+        background-color: var(--success-hover);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(76, 175, 80, 0.3);
+      }
+
+      .submit-btn:active:not(:disabled) {
+        transform: translateY(0);
+      }
+
+      .submit-btn:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .success-container {
+        text-align: center;
+        animation: fadeIn 0.5s ease-in-out;
+      }
+
+      .success-content {
+        margin-top: 20px;
+      }
+
+      .success-emoji {
+        font-size: 3em;
+        margin-bottom: 15px;
+        animation: pulse 1.5s ease-in-out;
+      }
+
+      .success-title {
+        font-size: 1.6em;
+        margin-bottom: 12px;
+        color: var(--success-color);
+      }
+
+      .success-message {
+        font-size: 1em;
+        margin-bottom: 8px;
+      }
+
+      .success-subtitle {
+        opacity: 0.8;
+        font-size: 0.9em;
+      }
+
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      @keyframes bounce {
+        0%,
+        20%,
+        50%,
+        80%,
+        100% {
+          transform: translateY(0);
+        }
+        40% {
+          transform: translateY(-10px);
+        }
+        60% {
+          transform: translateY(-5px);
+        }
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.1);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      @media (max-width: 480px) {
+        .main-content {
+          padding: 10px;
+        }
+
+        .form-container {
+          padding: 20px;
+          max-width: 100%;
+        }
+
+        .form-title {
+          font-size: 1.4em;
+        }
+
+        .welcome-emoji {
+          font-size: 2em;
+        }
+
+        .form-input {
+          padding: 10px;
+          font-size: 15px;
+        }
+
+        .submit-btn {
+          padding: 10px 20px;
+          font-size: 14px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="main-content">
+      <section class="form-container" aria-labelledby="form-heading">
+        <div class="welcome-emoji" aria-hidden="true">👋</div>
+        <header class="form-header">
+          <h1 id="form-heading" class="form-title">¡Bienvenido!</h1>
+          <p class="form-description">
+            Para continuar, por favor introduce tu nombre:
+          </p>
+        </header>
+
+        <form id="greeting-form" class="greeting-form" novalidate>
+          <fieldset class="form-fieldset">
+            <legend class="visually-hidden">Información personal</legend>
+            <div class="form-group">
+              <label for="name" class="form-label">Tu nombre:</label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                class="form-input"
+                placeholder="Escribe tu nombre aquí..."
+                required
+                autocomplete="given-name"
+                maxlength="50"
+                aria-describedby="name-help"
+              />
+              <div id="name-help" class="visually-hidden">
+                Introduce tu nombre para recibir un saludo personalizado
+              </div>
+            </div>
+            <button
+              type="submit"
+              id="continue-btn"
+              class="submit-btn"
+              aria-describedby="submit-help"
+            >
+              Continuar
+            </button>
+            <div id="submit-help" class="visually-hidden">
+              Envía el formulario para recibir tu saludo personalizado
+            </div>
+          </fieldset>
+        </form>
+      </section>
+    </main>
+
+    <script>
+      const CONFIG = {
+        MESSAGE_TYPE: "greeting",
+        MAX_NAME_LENGTH: 50,
+        MIN_NAME_LENGTH: 1,
+        SUCCESS_DISPLAY_TIME: 2000,
+      };
+
+      const elements = {
+        form: document.getElementById("greeting-form"),
+        nameInput: document.getElementById("name"),
+        submitBtn: document.getElementById("continue-btn"),
+        container: document.querySelector(".form-container"),
+      };
+
+      class ChildApp {
+        constructor() {
+          this.init();
+        }
+
+        init() {
+          this.setupEventListeners();
+          this.focusNameInput();
+          this.logAppStart();
+        }
+
+        setupEventListeners() {
+          elements.form.addEventListener(
+            "submit",
+            this.handleSubmit.bind(this)
+          );
+
+          elements.nameInput.addEventListener(
+            "input",
+            this.handleInput.bind(this)
+          );
+
+          elements.nameInput.addEventListener(
+            "keypress",
+            this.handleKeyPress.bind(this)
+          );
+        }
+
+        handleSubmit(event) {
+          event.preventDefault();
+
+          const name = this.getValidatedName();
+          if (!name) {
+            this.showValidationError();
+            return;
+          }
+
+          this.sendMessageToParent(name);
+          this.showSuccessMessage(name);
+        }
+
+        handleInput(event) {
+          const value = event.target.value;
+          this.updateSubmitButtonState(value);
+        }
+
+        handleKeyPress(event) {
+          if (event.key === "Enter") {
+            event.preventDefault();
+            elements.form.dispatchEvent(new Event("submit"));
+          }
+        }
+
+        getValidatedName() {
+          const name = elements.nameInput.value.trim();
+
+          if (name.length < CONFIG.MIN_NAME_LENGTH) {
+            return null;
+          }
+
+          if (name.length > CONFIG.MAX_NAME_LENGTH) {
+            return name.substring(0, CONFIG.MAX_NAME_LENGTH);
+          }
+
+          return name;
+        }
+
+        updateSubmitButtonState(value) {
+          const isValid = value.trim().length >= CONFIG.MIN_NAME_LENGTH;
+          elements.submitBtn.disabled = !isValid;
+        }
+
+        sendMessageToParent(name) {
+          const message = {
+            type: CONFIG.MESSAGE_TYPE,
+            name: name,
+            timestamp: new Date().toISOString(),
+          };
+
+          try {
+            window.parent.postMessage(message, "*");
+            this.logMessageSent(message);
+          } catch (error) {
+            console.error("Error enviando mensaje al padre:", error);
+          }
+        }
+
+        showSuccessMessage(name) {
+          const successHTML = this.createSuccessHTML(name);
+          elements.container.innerHTML = successHTML;
+        }
+
+        createSuccessHTML(name) {
+          return `
+            <section class="success-container" role="status" aria-live="polite">
+              <div class="success-emoji" aria-hidden="true">✅</div>
+              <header>
+                <h2 class="success-title">¡Perfecto!</h2>
+              </header>
+              <div class="success-content">
+                <p class="success-message">
+                  Hola <strong>${this.escapeHtml(
+                    name
+                  )}</strong>, tu información ha sido enviada.
+                </p>
+                <p class="success-subtitle">
+                  El iframe se cerrará en un momento...
+                </p>
+              </div>
+            </section>
+          `;
+        }
+
+        escapeHtml(text) {
+          const div = document.createElement("div");
+          div.textContent = text;
+          return div.innerHTML;
+        }
+
+        showValidationError() {
+          elements.nameInput.style.boxShadow =
+            "0 0 0 3px rgba(244, 67, 54, 0.3)";
+          elements.nameInput.focus();
+
+          setTimeout(() => {
+            elements.nameInput.style.boxShadow = "";
+          }, 2000);
+        }
+
+        focusNameInput() {
+          setTimeout(() => {
+            elements.nameInput.focus();
+          }, 100);
+        }
+
+        logAppStart() {
+          console.log("🎯 Página hijo cargada en iframe");
+        }
+
+        logMessageSent(message) {
+          console.log("📤 Enviando mensaje al padre:", message);
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        new ChildApp();
+      });
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", () => {
+          new ChildApp();
+        });
+      } else {
+        new ChildApp();
+      }
+    </script>
+  </body>
+</html>
