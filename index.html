@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Callback Demo</title>
+  <style>
+    :root {
+      --primary-color: #4caf50;
+      --primary-hover: #45a049;
+      --background-dark: #000;
+      --background-secondary: #333;
+      --text-light: #fff;
+      --border-radius: 10px;
+      --transition-speed: 0.3s;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: var(--background-dark);
+      color: var(--text-light);
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      line-height: 1.6;
+    }
+
+    .main-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .app-header {
+      width: 100%;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .page-title {
+      margin: 0;
+      font-size: 2em;
+      font-weight: 300;
+    }
+
+    .iframe-section {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .iframe-container {
+      width: min(500px, 90vw);
+      height: 450px;
+      border: 2px solid var(--text-light);
+      border-radius: var(--border-radius);
+      overflow: hidden;
+      transition: opacity var(--transition-speed) ease;
+    }
+
+    .child-iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+
+    .greeting-container {
+      text-align: center;
+      padding: 30px;
+      background-color: var(--background-secondary);
+      border-radius: var(--border-radius);
+      margin-top: 20px;
+      min-height: 80px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      max-width: 600px;
+      width: 100%;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    .greeting-text {
+      font-size: 1.5em;
+      color: var(--primary-color);
+      font-weight: 500;
+      margin: 0;
+    }
+
+    .controls-section {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .btn {
+      background-color: var(--primary-color);
+      color: var(--text-light);
+      border: none;
+      padding: 12px 24px;
+      font-size: 16px;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: all var(--transition-speed) ease;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      min-width: 160px;
+    }
+
+    .btn:hover {
+      background-color: var(--primary-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .main-content {
+        padding: 15px;
+      }
+
+      .page-title {
+        font-size: 1.5em;
+      }
+
+      .iframe-container {
+        height: 350px;
+      }
+
+      .greeting-container {
+        padding: 20px;
+        margin: 20px 10px;
+      }
+
+      .greeting-text {
+        font-size: 1.2em;
+      }
+
+      .btn {
+        padding: 10px 20px;
+        font-size: 14px;
+        min-width: 140px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="main-content">
+    <header class="app-header">
+      <h1 class="page-title">Demo de Callback</h1>
+    </header>
+
+    <section class="iframe-section" aria-labelledby="iframe-heading">
+      <h2 id="iframe-heading" class="visually-hidden">
+        Formulario de Saludo
+      </h2>
+      <div id="iframe-container" class="iframe-container">
+        <iframe id="child-iframe" class="child-iframe" src="hijo.html" title="Formulario de saludo" loading="lazy"
+          aria-label="Formulario para introducir nombre y recibir saludo"></iframe>
+      </div>
+    </section>
+
+    <section id="greeting-container" class="greeting-container hidden" aria-live="polite"
+      aria-labelledby="greeting-heading">
+      <h2 id="greeting-heading" class="visually-hidden">
+        Saludo Personalizado
+      </h2>
+      <div id="greeting-text" class="greeting-text" role="status"></div>
+    </section>
+
+    <aside class="controls-section">
+      <button id="restart-btn" class="btn hidden" type="button"
+        aria-label="Reiniciar la aplicación y mostrar el formulario nuevamente">
+        Empezar de Nuevo
+      </button>
+    </aside>
+  </main>
+
+  <script>
+    const CONFIG = {
+      MESSAGE_TYPE: "greeting",
+      ANIMATION_DELAY: 300,
+      TRUSTED_ORIGINS: [window.location.origin],
+    };
+
+    const elements = {
+      iframeContainer: document.getElementById("iframe-container"),
+      childIframe: document.getElementById("child-iframe"),
+      greetingContainer: document.getElementById("greeting-container"),
+      greetingText: document.getElementById("greeting-text"),
+      restartBtn: document.getElementById("restart-btn"),
+    };
+
+    class ParentApp {
+      constructor() {
+        this.init();
+      }
+
+      init() {
+        this.setupEventListeners();
+        this.logAppStart();
+      }
+
+      setupEventListeners() {
+        window.addEventListener("message", this.handleMessage.bind(this));
+
+        elements.restartBtn.addEventListener(
+          "click",
+          this.restart.bind(this)
+        );
+      }
+
+      handleMessage(event) {
+        if (!this.isValidMessage(event)) {
+          return;
+        }
+
+        const { name } = event.data;
+        this.showGreeting(name);
+        this.logReceivedEvent(event.data);
+      }
+
+      isValidMessage(event) {
+        if (!CONFIG.TRUSTED_ORIGINS.includes(event.origin)) {
+          console.warn("Mensaje de origen no confiable:", event.origin);
+          return false;
+        }
+
+        return (
+          event.data &&
+          event.data.type === CONFIG.MESSAGE_TYPE &&
+          typeof event.data.name === "string" &&
+          event.data.name.trim().length > 0
+        );
+      }
+
+      showGreeting(name) {
+        this.hideElement(elements.iframeContainer);
+
+        setTimeout(() => {
+          elements.greetingText.textContent = `¡Hola ${name}! 👋 Bienvenido/a a nuestra aplicación.`;
+          this.showElement(elements.greetingContainer);
+          this.showElement(elements.restartBtn);
+        }, CONFIG.ANIMATION_DELAY);
+      }
+
+      restart() {
+        this.hideElement(elements.greetingContainer);
+        this.hideElement(elements.restartBtn);
+
+        this.showElement(elements.iframeContainer);
+
+        this.reloadIframe();
+      }
+
+      reloadIframe() {
+        elements.childIframe.src = elements.childIframe.src;
+      }
+
+      hideElement(element) {
+        element.classList.add("hidden");
+      }
+
+      showElement(element) {
+        element.classList.remove("hidden");
+      }
+
+      logAppStart() {
+        console.log(
+          "✅ Página padre cargada. Esperando eventos del iframe hijo..."
+        );
+      }
+
+      logReceivedEvent(data) {
+        console.log("📨 Evento recibido del iframe:", data);
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      new ParentApp();
+    });
+  </script>
+</body>
+
+</html>
